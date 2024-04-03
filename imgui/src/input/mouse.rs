@@ -1,7 +1,6 @@
 use std::ptr;
 
 use crate::math::MintVec2;
-use crate::sys;
 use crate::Ui;
 
 /// Represents one of the supported mouse buttons

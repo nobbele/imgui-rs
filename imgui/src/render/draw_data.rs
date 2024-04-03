@@ -4,7 +4,6 @@ use std::slice;
 use crate::internal::{RawCast, RawWrapper};
 use crate::math::MintVec2;
 use crate::render::renderer::TextureId;
-use crate::sys;
 
 /// All draw data to render a Dear ImGui frame.
 #[repr(C)]
@@ -42,10 +41,14 @@ unsafe impl RawCast<sys::ImDrawData> for DrawData {}
 impl DrawData {
     /// Returns an iterator over the draw lists included in the draw data.
     #[inline]
-    pub fn draw_lists(&self) -> DrawListIterator<'_> {
+    pub fn draw_lists(&self) -> Option<DrawListIterator<'_>> {
         unsafe {
-            DrawListIterator {
-                iter: self.cmd_lists().iter(),
+            if let Some(cmd_lists) = self.cmd_lists() {
+                Some(DrawListIterator {
+                    iter: cmd_lists.iter(),
+                })
+            } else {
+                None
             }
         }
     }
@@ -55,11 +58,15 @@ impl DrawData {
         self.cmd_lists_count.try_into().unwrap()
     }
     #[inline]
-    pub(crate) unsafe fn cmd_lists(&self) -> &[*const DrawList] {
-        slice::from_raw_parts(
+    pub(crate) unsafe fn cmd_lists(&self) -> Option<&[*const DrawList]> {
+        if self.cmd_lists.is_null() {
+            return None;
+        }
+
+        Some(slice::from_raw_parts(
             self.cmd_lists as *const *const DrawList,
             self.cmd_lists_count as usize,
-        )
+        ))
     }
     /// Converts all buffers from indexed to non-indexed, in case you cannot render indexed
     /// buffers.

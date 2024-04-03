@@ -2,7 +2,6 @@ use std::os::raw::c_void;
 use std::ptr;
 
 use crate::internal::DataTypeKind;
-use crate::sys;
 use crate::widget::slider::SliderFlags;
 use crate::Ui;
 

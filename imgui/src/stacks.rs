@@ -2,7 +2,6 @@ use crate::fonts::atlas::FontId;
 use crate::internal::RawCast;
 use crate::math::MintVec4;
 use crate::style::{StyleColor, StyleVar};
-use crate::sys;
 use crate::Ui;
 use std::mem;
 use std::os::raw::c_char;

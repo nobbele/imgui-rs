@@ -1,4 +1,3 @@
-use crate::sys;
 use crate::Ui;
 
 /// A key identifier

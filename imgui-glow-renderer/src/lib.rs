@@ -296,37 +296,39 @@ impl Renderer {
         self.set_up_render_state(gl, draw_data, fb_width, fb_height)?;
 
         gl_debug_message(gl, "start loop over draw lists");
-        for draw_list in draw_data.draw_lists() {
-            unsafe {
-                gl.buffer_data_u8_slice(
-                    glow::ARRAY_BUFFER,
-                    to_byte_slice(draw_list.vtx_buffer()),
-                    glow::STREAM_DRAW,
-                );
-                gl.buffer_data_u8_slice(
-                    glow::ELEMENT_ARRAY_BUFFER,
-                    to_byte_slice(draw_list.idx_buffer()),
-                    glow::STREAM_DRAW,
-                );
-            }
+        if let Some(draw_lists) = draw_data.draw_lists() {
+            for draw_list in draw_lists {
+                unsafe {
+                    gl.buffer_data_u8_slice(
+                        glow::ARRAY_BUFFER,
+                        to_byte_slice(draw_list.vtx_buffer()),
+                        glow::STREAM_DRAW,
+                    );
+                    gl.buffer_data_u8_slice(
+                        glow::ELEMENT_ARRAY_BUFFER,
+                        to_byte_slice(draw_list.idx_buffer()),
+                        glow::STREAM_DRAW,
+                    );
+                }
 
-            gl_debug_message(gl, "start loop over commands");
-            for command in draw_list.commands() {
-                match command {
-                    DrawCmd::Elements { count, cmd_params } => self.render_elements(
-                        gl,
-                        texture_map,
-                        count,
-                        cmd_params,
-                        draw_data,
-                        fb_width,
-                        fb_height,
-                    ),
-                    DrawCmd::RawCallback { callback, raw_cmd } => unsafe {
-                        callback(draw_list.raw(), raw_cmd)
-                    },
-                    DrawCmd::ResetRenderState => {
-                        self.set_up_render_state(gl, draw_data, fb_width, fb_height)?
+                gl_debug_message(gl, "start loop over commands");
+                for command in draw_list.commands() {
+                    match command {
+                        DrawCmd::Elements { count, cmd_params } => self.render_elements(
+                            gl,
+                            texture_map,
+                            count,
+                            cmd_params,
+                            draw_data,
+                            fb_width,
+                            fb_height,
+                        ),
+                        DrawCmd::RawCallback { callback, raw_cmd } => unsafe {
+                            callback(draw_list.raw(), raw_cmd)
+                        },
+                        DrawCmd::ResetRenderState => {
+                            self.set_up_render_state(gl, draw_data, fb_width, fb_height)?
+                        }
                     }
                 }
             }

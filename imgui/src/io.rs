@@ -9,7 +9,6 @@ use crate::fonts::font::Font;
 use crate::input::keyboard::Key;
 use crate::input::mouse::MouseButton;
 use crate::internal::{ImVector, RawCast};
-use crate::sys;
 
 bitflags! {
     /// Configuration flags

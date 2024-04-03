@@ -1,9 +1,7 @@
-use std::convert::TryFrom;
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
 use crate::internal::RawCast;
-use crate::sys;
 use crate::Direction;
 
 /// User interface style/colors

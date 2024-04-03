@@ -2,8 +2,8 @@ use std::f32;
 
 use crate::math::MintVec2;
 use crate::window::WindowFlags;
+use crate::Id;
 use crate::Ui;
-use crate::{sys, Id};
 
 /// Builder for a child window
 #[derive(Copy, Clone, Debug)]

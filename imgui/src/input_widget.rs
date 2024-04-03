@@ -5,7 +5,6 @@ use std::ptr;
 
 use crate::internal::DataTypeKind;
 use crate::math::*;
-use crate::sys;
 use crate::Ui;
 
 bitflags!(
@@ -952,7 +951,7 @@ pub trait InputTextCallbackHandler {
     fn on_completion(&mut self, _: TextCallbackData) {}
 
     /// Allows one to edit the inner buffer whenever the buffer has been changed.
-    ///    
+    ///
     /// To make ImGui run this callback, use [InputTextCallback::EDIT] or
     /// [InputTextMultilineCallback::EDIT].
     fn on_edit(&mut self, _: TextCallbackData) {}

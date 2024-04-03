@@ -1,6 +1,5 @@
 use std::ptr;
 
-use crate::sys;
 use crate::window::WindowFlags;
 use crate::Ui;
 

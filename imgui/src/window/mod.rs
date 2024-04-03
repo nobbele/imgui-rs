@@ -3,7 +3,6 @@ use std::f32;
 use std::ptr;
 
 use crate::math::MintVec2;
-use crate::sys;
 use crate::{Condition, Ui};
 
 pub(crate) mod child_window;

@@ -842,44 +842,50 @@ impl Renderer {
                 .unwrap();
             glow.uniform_matrix_4_f32_slice(Some(&loc), false, &matrix);
 
-            for list in draw_data.draw_lists() {
-                glow.buffer_data_u8_slice(
-                    glow::ARRAY_BUFFER,
-                    slice::from_raw_parts(
-                        list.vtx_buffer().as_ptr().cast(),
-                        list.vtx_buffer().len() * 20,
-                    ),
-                    glow::STREAM_DRAW,
-                );
-                glow.buffer_data_u8_slice(
-                    glow::ELEMENT_ARRAY_BUFFER,
-                    slice::from_raw_parts(
-                        list.idx_buffer().as_ptr().cast(),
-                        list.idx_buffer().len() * 2,
-                    ),
-                    glow::STREAM_DRAW,
-                );
+            if let Some(draw_lists) = draw_data.draw_lists() {
+                for list in draw_lists {
+                    glow.buffer_data_u8_slice(
+                        glow::ARRAY_BUFFER,
+                        slice::from_raw_parts(
+                            list.vtx_buffer().as_ptr().cast(),
+                            list.vtx_buffer().len() * 20,
+                        ),
+                        glow::STREAM_DRAW,
+                    );
+                    glow.buffer_data_u8_slice(
+                        glow::ELEMENT_ARRAY_BUFFER,
+                        slice::from_raw_parts(
+                            list.idx_buffer().as_ptr().cast(),
+                            list.idx_buffer().len() * 2,
+                        ),
+                        glow::STREAM_DRAW,
+                    );
 
-                for cmd in list.commands() {
-                    if let imgui::DrawCmd::Elements { count, cmd_params } = cmd {
-                        let clip_x1 = (cmd_params.clip_rect[0] - draw_data.display_pos[0]) as i32;
-                        let clip_y1 = (cmd_params.clip_rect[1] - draw_data.display_pos[1]) as i32;
-                        let clip_x2 = (cmd_params.clip_rect[2] - draw_data.display_pos[0]) as i32;
-                        let clip_y2 = (cmd_params.clip_rect[3] - draw_data.display_pos[1]) as i32;
+                    for cmd in list.commands() {
+                        if let imgui::DrawCmd::Elements { count, cmd_params } = cmd {
+                            let clip_x1 =
+                                (cmd_params.clip_rect[0] - draw_data.display_pos[0]) as i32;
+                            let clip_y1 =
+                                (cmd_params.clip_rect[1] - draw_data.display_pos[1]) as i32;
+                            let clip_x2 =
+                                (cmd_params.clip_rect[2] - draw_data.display_pos[0]) as i32;
+                            let clip_y2 =
+                                (cmd_params.clip_rect[3] - draw_data.display_pos[1]) as i32;
 
-                        glow.scissor(
-                            clip_x1,
-                            window_size.height as i32 - clip_y2,
-                            clip_x2 - clip_x1,
-                            clip_y2 - clip_y1,
-                        );
-                        glow.draw_elements_base_vertex(
-                            glow::TRIANGLES,
-                            count as i32,
-                            glow::UNSIGNED_SHORT,
-                            (cmd_params.idx_offset * 2) as i32,
-                            cmd_params.vtx_offset as i32,
-                        );
+                            glow.scissor(
+                                clip_x1,
+                                window_size.height as i32 - clip_y2,
+                                clip_x2 - clip_x1,
+                                clip_y2 - clip_y1,
+                            );
+                            glow.draw_elements_base_vertex(
+                                glow::TRIANGLES,
+                                count as i32,
+                                glow::UNSIGNED_SHORT,
+                                (cmd_params.idx_offset * 2) as i32,
+                                cmd_params.vtx_offset as i32,
+                            );
+                        }
                     }
                 }
             }

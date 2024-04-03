@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use crate::sys;
 use crate::Ui;
 
 /// Used to render only the visible items when displaying a

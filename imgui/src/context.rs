@@ -1,7 +1,6 @@
 use parking_lot::ReentrantMutex;
 use std::cell::UnsafeCell;
 use std::ffi::{CStr, CString};
-use std::ops::Drop;
 use std::path::PathBuf;
 use std::ptr;
 
@@ -9,7 +8,7 @@ use crate::clipboard::{ClipboardBackend, ClipboardContext};
 use crate::fonts::atlas::{FontAtlas, FontId, SharedFontAtlas};
 use crate::io::Io;
 use crate::style::Style;
-use crate::{sys, DrawData};
+use crate::DrawData;
 use crate::{MouseCursor, Ui};
 
 /// An imgui-rs context.

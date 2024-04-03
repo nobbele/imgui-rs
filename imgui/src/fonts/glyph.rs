@@ -1,5 +1,4 @@
 use crate::internal::RawCast;
-use crate::sys;
 
 /// A single font glyph
 #[derive(Copy, Clone, Debug, PartialEq)]

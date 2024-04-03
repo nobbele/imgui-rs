@@ -2,7 +2,6 @@ use bitflags::bitflags;
 use std::os::raw::{c_char, c_void};
 
 // use crate::string::ImStr;
-use crate::sys;
 use crate::{Condition, Ui};
 
 bitflags!(

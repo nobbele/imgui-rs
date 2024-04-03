@@ -28,7 +28,7 @@
 //! For examples of each payload type, see [DragDropSource].
 use std::{any, ffi, marker::PhantomData};
 
-use crate::{sys, Condition, Ui};
+use crate::{Condition, Ui};
 use bitflags::bitflags;
 
 bitflags!(
@@ -88,7 +88,7 @@ impl Ui {
 /// # use imgui::*;
 /// fn show_ui(ui: &Ui) {
 ///     ui.button("Hello, I am a drag source!");
-///     
+///
 ///     // Creates an empty DragSource with no tooltip
 ///     ui.drag_drop_source_config("BUTTON_DRAG").begin();
 /// }
@@ -158,7 +158,7 @@ impl<'ui, T: AsRef<str>> DragDropSource<'ui, T> {
     ///     ui.button("Drag me!");
     ///
     ///     let drag_drop_name = "Test Drag";
-    ///     
+    ///
     ///     // drag drop SOURCE
     ///     if ui.drag_drop_source_config(drag_drop_name).begin().is_some() {
     ///         // warning -- this would allocate every frame if `DragDropSource` has
@@ -212,7 +212,7 @@ impl<'ui, T: AsRef<str>> DragDropSource<'ui, T> {
     ///
     ///     let drag_drop_name = "Test Drag";
     ///     let msg_to_send = "hello there sailor";
-    ///     
+    ///
     ///     // drag drop SOURCE
     ///     if let Some(tooltip) = ui.drag_drop_source_config(drag_drop_name).begin_payload(msg_to_send) {
     ///         ui.text("Sending message!");
@@ -337,13 +337,13 @@ impl Ui {
 /// fn show_ui(ui: &Ui) {
 ///     // Drop something on this button please!
 ///     ui.button("Hello, I am a drag Target!");
-///     
+///
 ///     if let Some(target) = DragDropTarget::new(ui) {
 ///         // accepting an empty payload (which is really just raising an event)
 ///         if let Some(_payload_data) = target.accept_payload_empty("BUTTON_DRAG", DragDropFlags::empty()) {
 ///             println!("Nice job getting on the payload!");
 ///         }
-///    
+///
 ///         // and we can accept multiple, different types of payloads with one drop target.
 ///         // this is a good pattern for handling different kinds of drag/drop situations with
 ///         // different kinds of data in them.

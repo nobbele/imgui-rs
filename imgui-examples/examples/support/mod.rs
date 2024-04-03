@@ -19,6 +19,7 @@ pub struct System {
     pub imgui: Context,
     pub platform: WinitPlatform,
     pub renderer: Renderer,
+    #[allow(dead_code)]
     pub font_size: f32,
 }
 

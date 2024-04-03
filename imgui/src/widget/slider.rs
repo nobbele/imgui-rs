@@ -3,7 +3,6 @@ use std::os::raw::c_void;
 
 use crate::internal::DataTypeKind;
 use crate::math::MintVec2;
-use crate::sys;
 use crate::Ui;
 
 bitflags!(

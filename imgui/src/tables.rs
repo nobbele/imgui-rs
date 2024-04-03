@@ -3,7 +3,6 @@ use std::marker::PhantomData;
 
 use bitflags::bitflags;
 
-use crate::sys;
 use crate::{Id, ImColor32, Ui};
 
 bitflags! {
@@ -424,7 +423,7 @@ impl Ui {
     ///
     ///     ui.table_next_column();
     ///     ui.text("x: 1, y: 0");
-    ///     
+    ///
     ///     // notice that we go down a row here too.
     ///     ui.table_next_column();
     ///     ui.text("x: 0, y: 1");
@@ -456,7 +455,7 @@ impl Ui {
     ///         ui.table_set_column_index(i);
     ///         ui.text(format!("x: {}", i));
     ///     }
-    ///     
+    ///
     ///     // oops I just remembered, i need to add something on idx 0!
     ///     ui.table_set_column_index(0);
     ///     // if i uncomment this line, we'll write on top of our previous "x: 0"

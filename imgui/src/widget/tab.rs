@@ -17,7 +17,6 @@
 //! ```
 //!
 //! See `test_window_impl.rs` for a more complicated example.
-use crate::sys;
 use crate::Ui;
 use bitflags::bitflags;
 use std::ptr;

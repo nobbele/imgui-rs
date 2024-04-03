@@ -204,78 +204,83 @@ impl Renderer {
         ];
         let clip_off = draw_data.display_pos;
         let clip_scale = draw_data.framebuffer_scale;
-        for draw_list in draw_data.draw_lists() {
-            let vtx_buffer = VertexBuffer::immutable(&self.ctx, unsafe {
-                draw_list.transmute_vtx_buffer::<GliumDrawVert>()
-            })?;
-            let idx_buffer = IndexBuffer::immutable(
-                &self.ctx,
-                PrimitiveType::TrianglesList,
-                draw_list.idx_buffer(),
-            )?;
-            for cmd in draw_list.commands() {
-                match cmd {
-                    DrawCmd::Elements {
-                        count,
-                        cmd_params:
-                            DrawCmdParams {
-                                clip_rect,
-                                texture_id,
-                                vtx_offset,
-                                idx_offset,
-                                ..
-                            },
-                    } => {
-                        let clip_rect = [
-                            (clip_rect[0] - clip_off[0]) * clip_scale[0],
-                            (clip_rect[1] - clip_off[1]) * clip_scale[1],
-                            (clip_rect[2] - clip_off[0]) * clip_scale[0],
-                            (clip_rect[3] - clip_off[1]) * clip_scale[1],
-                        ];
-
-                        if clip_rect[0] < fb_width
-                            && clip_rect[1] < fb_height
-                            && clip_rect[2] >= 0.0
-                            && clip_rect[3] >= 0.0
-                        {
-                            let texture = self.lookup_texture(texture_id)?;
-
-                            target.draw(
-                                vtx_buffer
-                                    .slice(vtx_offset..)
-                                    .expect("Invalid vertex buffer range"),
-                                idx_buffer
-                                    .slice(idx_offset..(idx_offset + count))
-                                    .expect("Invalid index buffer range"),
-                                &self.program,
-                                &uniform! {
-                                    matrix: matrix,
-                                    tex: Sampler(texture.texture.as_ref(), texture.sampler)
+        if let Some(draw_lists) = draw_data.draw_lists() {
+            for draw_list in draw_lists {
+                let vtx_buffer = VertexBuffer::immutable(&self.ctx, unsafe {
+                    draw_list.transmute_vtx_buffer::<GliumDrawVert>()
+                })?;
+                let idx_buffer = IndexBuffer::immutable(
+                    &self.ctx,
+                    PrimitiveType::TrianglesList,
+                    draw_list.idx_buffer(),
+                )?;
+                for cmd in draw_list.commands() {
+                    match cmd {
+                        DrawCmd::Elements {
+                            count,
+                            cmd_params:
+                                DrawCmdParams {
+                                    clip_rect,
+                                    texture_id,
+                                    vtx_offset,
+                                    idx_offset,
+                                    ..
                                 },
-                                &DrawParameters {
-                                    blend: Blend {
-                                        alpha: BlendingFunction::Addition {
-                                            source: LinearBlendingFactor::One,
-                                            destination: LinearBlendingFactor::OneMinusSourceAlpha,
-                                        },
-                                        ..Blend::alpha_blending()
+                        } => {
+                            let clip_rect = [
+                                (clip_rect[0] - clip_off[0]) * clip_scale[0],
+                                (clip_rect[1] - clip_off[1]) * clip_scale[1],
+                                (clip_rect[2] - clip_off[0]) * clip_scale[0],
+                                (clip_rect[3] - clip_off[1]) * clip_scale[1],
+                            ];
+
+                            if clip_rect[0] < fb_width
+                                && clip_rect[1] < fb_height
+                                && clip_rect[2] >= 0.0
+                                && clip_rect[3] >= 0.0
+                            {
+                                let texture = self.lookup_texture(texture_id)?;
+
+                                target.draw(
+                                    vtx_buffer
+                                        .slice(vtx_offset..)
+                                        .expect("Invalid vertex buffer range"),
+                                    idx_buffer
+                                        .slice(idx_offset..(idx_offset + count))
+                                        .expect("Invalid index buffer range"),
+                                    &self.program,
+                                    &uniform! {
+                                        matrix: matrix,
+                                        tex: Sampler(texture.texture.as_ref(), texture.sampler)
                                     },
-                                    scissor: Some(Rect {
-                                        left: f32::max(0.0, clip_rect[0]).floor() as u32,
-                                        bottom: f32::max(0.0, fb_height - clip_rect[3]).floor()
-                                            as u32,
-                                        width: (clip_rect[2] - clip_rect[0]).abs().ceil() as u32,
-                                        height: (clip_rect[3] - clip_rect[1]).abs().ceil() as u32,
-                                    }),
-                                    ..DrawParameters::default()
-                                },
-                            )?;
+                                    &DrawParameters {
+                                        blend: Blend {
+                                            alpha: BlendingFunction::Addition {
+                                                source: LinearBlendingFactor::One,
+                                                destination:
+                                                    LinearBlendingFactor::OneMinusSourceAlpha,
+                                            },
+                                            ..Blend::alpha_blending()
+                                        },
+                                        scissor: Some(Rect {
+                                            left: f32::max(0.0, clip_rect[0]).floor() as u32,
+                                            bottom: f32::max(0.0, fb_height - clip_rect[3]).floor()
+                                                as u32,
+                                            width: (clip_rect[2] - clip_rect[0]).abs().ceil()
+                                                as u32,
+                                            height: (clip_rect[3] - clip_rect[1]).abs().ceil()
+                                                as u32,
+                                        }),
+                                        ..DrawParameters::default()
+                                    },
+                                )?;
+                            }
                         }
+                        DrawCmd::ResetRenderState => (), // TODO
+                        DrawCmd::RawCallback { callback, raw_cmd } => unsafe {
+                            callback(draw_list.raw(), raw_cmd)
+                        },
                     }
-                    DrawCmd::ResetRenderState => (), // TODO
-                    DrawCmd::RawCallback { callback, raw_cmd } => unsafe {
-                        callback(draw_list.raw(), raw_cmd)
-                    },
                 }
             }
         }

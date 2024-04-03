@@ -3,7 +3,6 @@ use std::os::raw::c_int;
 use crate::fonts::atlas::{FontAtlas, FontId};
 use crate::fonts::glyph::FontGlyph;
 use crate::internal::{ImVector, RawCast};
-use crate::sys;
 
 /// Runtime data for a single font within a font atlas
 #[repr(C)]

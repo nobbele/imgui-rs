@@ -1,7 +1,6 @@
 use bitflags::bitflags;
 use std::borrow::Cow;
 
-use crate::sys;
 use crate::Ui;
 
 // TODO: support size constraints
